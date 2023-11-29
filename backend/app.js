@@ -5,13 +5,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv/config');
 
+//middleware
+app.use(express.json()); // to parse the request body in the form of json
+app.use(morgan('tiny')); // for logging the url hits on to the console
+
+
 //cors
 app.use(cors()); // to enable cross origin resource sharing between FE & BE
 app.options('*', cors()); // applicable for all methods in the rest api like get,post,delete,update
 
-//middleware
-app.use(express.json()); // to parse the request body in the form of json
-app.use(morgan('tiny')); // for logging the url hits on to the console
 
 //Routes
 const categoriesRoutes = require('./routes/categories');
