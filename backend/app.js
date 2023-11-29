@@ -2,12 +2,16 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv/config');
-const connection_string = process.env.CONNECTION_STRING;
+
+//cors
+app.use(cors()); // to enable cross origin resource sharing between FE & BE
+app.options('*', cors()); // applicable for all methods in the rest api like get,post,delete,update
 
 //middleware
-app.use(express.json());
-app.use(morgan('tiny'));
+app.use(express.json()); // to parse the request body in the form of json
+app.use(morgan('tiny')); // for logging the url hits on to the console
 
 //Routes
 const categoriesRoutes = require('./routes/categories');
@@ -23,8 +27,8 @@ app.use(`${api}/categories`, categoriesRoutes);
 app.use(`${api}/users`, userRoutes);
 app.use(`${api}/orders`, orderRoutes);
 
-
-
+// mongoose connection to the webserver application
+const connection_string = process.env.CONNECTION_STRING;
 mongoose.connect(connection_string)
     .then(() => {
         console.log('Database connection is ready....');
@@ -33,6 +37,7 @@ mongoose.connect(connection_string)
         console.log(err);
     });
 
+//server start
 app.listen(3000, () => {
     console.log('server is running http://localhost:3000');
 });
