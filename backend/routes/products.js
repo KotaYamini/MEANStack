@@ -95,9 +95,10 @@ router.delete('/:id', (req, res) => {
 //GetCount
 router.get('/get/count', async (req, res) => {
     // To get the count of the documents in the table, we use countDocuments from the model
-    const productCount = await Product.countDocuments((count) => count);
+    // Here in mongoose count documents stop accepting the callbacks , so simply pass countDocuments() method on the model we are consuming
+    let productCount = await Product.countDocuments();
 
-    if (!product) {
+    if (!productCount) {
         res.status(500).json({ success: false });
     }
 
