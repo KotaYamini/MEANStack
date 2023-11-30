@@ -1,12 +1,14 @@
 const { Category } = require('../models/category');
 const { Product } = require('../models/products');
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 
 
 // http://localhost:3000/api/v1/products
+//GetAll
 router.get('/', async (req, res) => {
-    const productsList = await Product.find();
+    const productsList = await Product.find().populate('category');
 
     if (!productsList) {
         res.status(500).json({ success: false });
@@ -14,6 +16,17 @@ router.get('/', async (req, res) => {
     res.send(productsList);
 });
 
+//GetById
+router.get('/:id', async (req, res) => {
+    const product = await Product.findById(req.params.id).populate('category');
+
+    if (!product) {
+        res.status(500).json({ success: false });
+    }
+    res.send(product);
+});
+
+//Post
 router.post('/', async (req, res) => {
     let category = await Category.findById(req.body.category);
     if (!category) {
@@ -40,5 +53,55 @@ router.post('/', async (req, res) => {
     }
     return res.send(product);
 });
+//Put
+router.put('/:id', async (req, res) => {
+    // to check whether we are getting the valid id or  not, mongoose provides the isValidObjectId method
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).send('Invalid Product Id');
+    }
+    let category = await Category.findById(req.body.category);
+    if (!category) {
+        return res.status(400).send('Invalid Category Id');
+    }
+    let product = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+            name: req.body.name,
+            icon: req.body.icon || category.icon,
+            color: req.body.color
+        },
+        { new: true }
+    )
+
+    if (!product)
+        return req.status(400).send('The product cannot be updated!');
+
+    res.status(200).send(product);
+});
+
+// Delete
+router.delete('/:id', (req, res) => {
+    Product.findByIdAndDelete(req.params.id).then((product) => {
+        if (product) {
+            return res.status(200).json({ success: true, message: 'The Product Id deleted!' });
+        } else {
+            return res.status(404).json({ success: false, message: 'Product not Found!' });
+        }
+    }).catch((err) => {
+        return res.status(400).json({ success: false, error: err });
+    })
+})
+
+//GetCount
+router.get('/get/count', async (req, res) => {
+    // To get the count of the documents in the table, we use countDocuments from the model
+    const productCount = await Product.countDocuments((count) => count);
+
+    if (!product) {
+        res.status(500).json({ success: false });
+    }
+
+    res.send({ productCount: productCount });
+})
 
 module.exports = router;

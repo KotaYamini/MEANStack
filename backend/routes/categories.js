@@ -62,11 +62,11 @@ router.delete('/:id', (req, res) => {
         if (category) {
             return res.status(200).json({ success: true, message: 'The Category Id deleted!' });
         } else {
-            return res.status(404).json({ suceess: false, message: 'Category not found' })
+            return res.status(404).json({ suceess: false, message: 'Category not found' });
         }
 
     }).catch((err) => {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(400).json({ success: false, error: err });
     })
 })
 
