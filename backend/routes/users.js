@@ -12,6 +12,16 @@ router.get('/', async (req, res) => {
     res.setEncoding(usersList);
 });
 
+router.get('/:id', async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        res.status(500).json({ message: 'The user with the given Id was not found!' });
+    }
+
+    return res.status(200).send(user);
+})
+
 router.post('/', async (req, res) => {
     let user = new User({
         name: req.body.name,
