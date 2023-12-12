@@ -1,5 +1,5 @@
 const { User } = require('../models/user');
-
+const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
         name: req.body.name,
         email: req.body.email,
         color: req.body.color,
-        passwordHash: req.body.passwordHash,
+        passwordHash: bcrypt.hashSync(req.body.password, 10),
         phone: req.body.phone,
         isAdmin: req.body.isAdmin,
         apartment: req.body.apartment,
