@@ -1,5 +1,5 @@
 const { Category } = require('../models/category');
-const { Product } = require('../models/products');
+const { Product } = require('../models/product');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
