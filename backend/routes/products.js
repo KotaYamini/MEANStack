@@ -8,7 +8,11 @@ const router = express.Router();
 // http://localhost:3000/api/v1/products
 //GetAll
 router.get('/', async (req, res) => {
-    const productsList = await Product.find().populate('category');
+    let filter = {};
+    if (req.query?.categories) {
+        filter = { category: req.query?.categories?.split(',') };
+    }
+    const productsList = await Product.find(filter).populate('category');
 
     if (!productsList) {
         res.status(500).json({ success: false });
@@ -103,6 +107,17 @@ router.get('/get/count', async (req, res) => {
     }
 
     res.send({ productCount: productCount });
+});
+
+// FeatureCount
+router.get('/get/featured/:count', async (req, res) => {
+    const count = req.params.count ? req.params.count : 0;
+    // to show only the featured items onto the homepage with a limit of records by the user
+    let products = await Product.find({ isFeatured: true }).limit(+count);
+    if (!products) {
+        res.status(500).json({ success: false });
+    }
+    res.send(products);
 })
 
 module.exports = router;
