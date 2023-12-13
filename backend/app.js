@@ -3,12 +3,14 @@ const app = express();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const authJwt = require('./helpers/jwt');
+
 require('dotenv/config');
 
 //middleware
 app.use(express.json()); // to parse the request body in the form of json
 app.use(morgan('tiny')); // for logging the url hits on to the console
-
+app.use(authJwt);
 
 //cors
 app.use(cors()); // to enable cross origin resource sharing between FE & BE
@@ -20,6 +22,7 @@ const categoriesRoutes = require('./routes/categories');
 const productsRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
 const orderRoutes = require('./routes/orders');
+
 
 // API URL
 const api = process.env.API_URL;

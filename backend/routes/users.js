@@ -1,5 +1,6 @@
 const { User } = require('../models/user');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 
@@ -82,7 +83,18 @@ router.post('/login', async (req, res) => {
     }
     // compare the stored password in the database with the user entered password
     if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-        res.status(200).send('User Authenticated');
+        const secret = process.env.secret;
+        const token = jwt.sign(
+            {
+                userId: user.id
+            },
+            secret,
+            {
+                expiresIn: '1d'
+            }
+        )
+        console.log('endpoint', req.auth);
+        res.status(200).send({ user: user.email, token: token });
     } else {
         res.status(400).send('Password is wrong!');
     }
